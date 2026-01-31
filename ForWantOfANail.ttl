@@ -1,0 +1,291 @@
+@prefix : <http://example.org/horseshoe#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+
+# ===== EVENTS IN CAUSAL SEQUENCE =====
+
+# Event 1: Loss of Nail
+:LossOfNail a :LossEvent ;
+    rdfs:label "Loss of horseshoe nail" ;
+    :lostObject :Nail ;
+    :sequenceOrder 1 ;
+    :directlyCauses :LossOfShoe ;
+    :cascadeLevel 0 ;
+    :magnitudeOfLoss "trivial"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint1 .
+
+# Event 2: Loss of Shoe
+:LossOfShoe a :LossEvent ;
+    rdfs:label "Loss of horseshoe" ;
+    :lostObject :Shoe ;
+    :sequenceOrder 2 ;
+    :causedBy :LossOfNail ;
+    :directlyCauses :LossOfHorse ;
+    :cascadeLevel 1 ;
+    :magnitudeOfLoss "minor"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint2 .
+
+# Event 3: Loss of Horse
+:LossOfHorse a :LossEvent ;
+    rdfs:label "Loss of horse" ;
+    :lostObject :Horse ;
+    :sequenceOrder 3 ;
+    :causedBy :LossOfShoe ;
+    :directlyCauses :LossOfRider ;
+    :cascadeLevel 2 ;
+    :magnitudeOfLoss "significant"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint3 .
+
+# Event 4: Loss of Rider
+:LossOfRider a :LossEvent ;
+    rdfs:label "Loss of rider" ;
+    :lostObject :Rider ;
+    :sequenceOrder 4 ;
+    :causedBy :LossOfHorse ;
+    :directlyCauses :LossOfBattle ;
+    :cascadeLevel 3 ;
+    :magnitudeOfLoss "critical"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint4 .
+
+# Event 5: Loss of Battle
+:LossOfBattle a :LossEvent, :MilitaryEvent ;
+    rdfs:label "Loss of battle" ;
+    :lostObject :Battle ;
+    :sequenceOrder 5 ;
+    :causedBy :LossOfRider ;
+    :directlyCauses :LossOfKingdom ;
+    :cascadeLevel 4 ;
+    :magnitudeOfLoss "catastrophic"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint5 .
+
+# Event 6: Loss of Kingdom
+:LossOfKingdom a :LossEvent, :PoliticalEvent ;
+    rdfs:label "Loss of kingdom" ;
+    :lostObject :Kingdom ;
+    :sequenceOrder 6 ;
+    :causedBy :LossOfBattle ;
+    :cascadeLevel 5 ;
+    :magnitudeOfLoss "total"^^xsd:string ;
+    time:hasTemporalEntity :TimePoint6 .
+
+# ===== RDF-STAR REIFICATIONS FOR CAUSAL RELATIONSHIPS =====
+
+# Reifying the causal chain with metadata
+<<:LossOfNail :directlyCauses :LossOfShoe>> 
+    :causalStrength 1.0 ;
+    :causalType "material_dependency" ;
+    :inevitability "certain"^^xsd:string ;
+    :explanation "Without nail, shoe cannot be secured" .
+
+<<:LossOfShoe :directlyCauses :LossOfHorse>> 
+    :causalStrength 0.95 ;
+    :causalType "functional_dependency" ;
+    :inevitability "near_certain"^^xsd:string ;
+    :explanation "Without shoe, horse becomes lame" .
+
+<<:LossOfHorse :directlyCauses :LossOfRider>> 
+    :causalStrength 0.9 ;
+    :causalType "operational_dependency" ;
+    :inevitability "highly_probable"^^xsd:string ;
+    :explanation "Without horse, rider cannot reach destination" .
+
+<<:LossOfRider :directlyCauses :LossOfBattle>> 
+    :causalStrength 0.85 ;
+    :causalType "strategic_dependency" ;
+    :inevitability "probable"^^xsd:string ;
+    :explanation "Without rider, critical information/command not delivered" .
+
+<<:LossOfBattle :directlyCauses :LossOfKingdom>> 
+    :causalStrength 0.8 ;
+    :causalType "political_dependency" ;
+    :inevitability "possible"^^xsd:string ;
+    :explanation "Without battle victory, kingdom falls to enemy" .
+
+# ===== ROOT CAUSE ANALYSIS WITH RDF-STAR =====
+
+# Ultimate causation from root to consequence
+<<:LossOfNail :ultimatelyCauses :LossOfKingdom>> 
+    :causalChainLength 5 ;
+    :transitiveStrength 0.614 ;  # Product of all strengths
+    :paradoxType "butterfly_effect" ;
+    :moralLesson "Small neglects lead to great disasters" .
+
+# Each event's relationship to root cause
+<<:LossOfShoe :rootCause :LossOfNail>> 
+    :intermediateSteps 0 ;
+    :accumulatedRisk 0.05 .
+
+<<:LossOfHorse :rootCause :LossOfNail>> 
+    :intermediateSteps 1 ;
+    :accumulatedRisk 0.15 .
+
+<<:LossOfRider :rootCause :LossOfNail>> 
+    :intermediateSteps 2 ;
+    :accumulatedRisk 0.30 .
+
+<<:LossOfBattle :rootCause :LossOfNail>> 
+    :intermediateSteps 3 ;
+    :accumulatedRisk 0.50 .
+
+<<:LossOfKingdom :rootCause :LossOfNail>> 
+    :intermediateSteps 4 ;
+    :accumulatedRisk 1.0 .
+
+# ===== OBJECTS INVOLVED =====
+
+:Nail a :MaterialObject ;
+    rdfs:label "horseshoe nail" ;
+    :objectType "fastener" ;
+    :relativeValue "negligible"^^xsd:string ;
+    :criticalityInSystem "essential"^^xsd:string .
+
+:Shoe a :Equipment ;
+    rdfs:label "horseshoe" ;
+    :objectType "protective_equipment" ;
+    :relativeValue "low"^^xsd:string ;
+    :dependsOn :Nail .
+
+:Horse a :Animal, :Transport ;
+    rdfs:label "horse" ;
+    :objectType "living_transport" ;
+    :relativeValue "moderate"^^xsd:string ;
+    :dependsOn :Shoe .
+
+:Rider a :Person, :Combatant ;
+    rdfs:label "rider" ;
+    :objectType "human_agent" ;
+    :relativeValue "high"^^xsd:string ;
+    :dependsOn :Horse .
+
+:Battle a :MilitaryEvent ;
+    rdfs:label "battle" ;
+    :objectType "military_engagement" ;
+    :relativeValue "critical"^^xsd:string ;
+    :dependsOn :Rider .
+
+:Kingdom a :PoliticalEntity ;
+    rdfs:label "kingdom" ;
+    :objectType "sovereign_state" ;
+    :relativeValue "supreme"^^xsd:string ;
+    :dependsOn :Battle .
+
+# ===== EVENT CHAIN AS A WHOLE =====
+
+:HorseshoeNailCascade a :CausalChain ;
+    rdfs:label "The Horseshoe Nail Cascade" ;
+    :hasFirstEvent :LossOfNail ;
+    :hasLastEvent :LossOfKingdom ;
+    :chainLength 6 ;
+    :narrativeType "cautionary_tale" ;
+    :literaryDevice "incremental_repetition" ;
+    :thematicConcept "proportionality_inversion" .
+
+# ===== TEMPORAL ORDERING =====
+
+:TimePoint1 a time:Instant ;
+    time:inTemporalPosition :Position1 .
+:Position1 time:numericPosition 1 .
+
+:TimePoint2 a time:Instant ;
+    time:inTemporalPosition :Position2 ;
+    time:after :TimePoint1 .
+:Position2 time:numericPosition 2 .
+
+:TimePoint3 a time:Instant ;
+    time:inTemporalPosition :Position3 ;
+    time:after :TimePoint2 .
+:Position3 time:numericPosition 3 .
+
+:TimePoint4 a time:Instant ;
+    time:inTemporalPosition :Position4 ;
+    time:after :TimePoint3 .
+:Position4 time:numericPosition 4 .
+
+:TimePoint5 a time:Instant ;
+    time:inTemporalPosition :Position5 ;
+    time:after :TimePoint4 .
+:Position5 time:numericPosition 5 .
+
+:TimePoint6 a time:Instant ;
+    time:inTemporalPosition :Position6 ;
+    time:after :TimePoint5 .
+:Position6 time:numericPosition 6 .
+
+# ===== CLASS DEFINITIONS =====
+
+:LossEvent a rdfs:Class ;
+    rdfs:label "Loss Event" ;
+    rdfs:comment "Event representing the absence or deprivation of something" .
+
+:MilitaryEvent a rdfs:Class ;
+    rdfs:label "Military Event" ;
+    rdfs:comment "Event involving armed conflict" .
+
+:PoliticalEvent a rdfs:Class ;
+    rdfs:label "Political Event" ;
+    rdfs:comment "Event affecting governance structures" .
+
+:CausalChain a rdfs:Class ;
+    rdfs:label "Causal Chain" ;
+    rdfs:comment "Sequence of causally connected events" .
+
+:MaterialObject a rdfs:Class ;
+    rdfs:label "Material Object" .
+
+:Equipment a rdfs:Class ;
+    rdfs:label "Equipment" .
+
+:Animal a rdfs:Class ;
+    rdfs:label "Animal" .
+
+:Transport a rdfs:Class ;
+    rdfs:label "Transport" .
+
+:Person a rdfs:Class ;
+    rdfs:label "Person" .
+
+:Combatant a rdfs:Class ;
+    rdfs:label "Combatant" .
+
+:PoliticalEntity a rdfs:Class ;
+    rdfs:label "Political Entity" .
+
+# ===== PROPERTY DEFINITIONS =====
+
+:directlyCauses a rdf:Property ;
+    rdfs:label "directly causes" ;
+    rdfs:domain :LossEvent ;
+    rdfs:range :LossEvent .
+
+:causedBy a rdf:Property ;
+    rdfs:label "caused by" ;
+    rdfs:domain :LossEvent ;
+    rdfs:range :LossEvent .
+
+:ultimatelyCauses a rdf:Property ;
+    rdfs:label "ultimately causes" ;
+    rdfs:comment "Transitive causal relationship across chain" .
+
+:rootCause a rdf:Property ;
+    rdfs:label "root cause" ;
+    rdfs:comment "Original initiating event in causal chain" .
+
+:lostObject a rdf:Property ;
+    rdfs:label "lost object" ;
+    rdfs:domain :LossEvent .
+
+:dependsOn a rdf:Property ;
+    rdfs:label "depends on" ;
+    rdfs:comment "Functional dependency relationship" .
+
+:causalStrength a rdf:Property ;
+    rdfs:label "causal strength" ;
+    rdfs:comment "Probabilistic weight of causal link (0.0-1.0)" ;
+    rdfs:range xsd:decimal .
+
+:cascadeLevel a rdf:Property ;
+    rdfs:label "cascade level" ;
+    rdfs:comment "Distance from initiating event" ;
+    rdfs:range xsd:integer .
