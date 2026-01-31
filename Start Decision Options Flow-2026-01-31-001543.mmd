@@ -1,0 +1,100 @@
+---
+config: 
+    layout: elk
+---
+
+graph TB
+    subgraph "CAUSAL CHAIN EVENTS"
+        E1[":LossOfNail<br/>(LossEvent)<br/>seq: 1, cascade: 0<br/>magnitude: trivial"]
+        E2[":LossOfShoe<br/>(LossEvent)<br/>seq: 2, cascade: 1<br/>magnitude: minor"]
+        E3[":LossOfHorse<br/>(LossEvent)<br/>seq: 3, cascade: 2<br/>magnitude: significant"]
+        E4[":LossOfRider<br/>(LossEvent)<br/>seq: 4, cascade: 3<br/>magnitude: critical"]
+        E5[":LossOfBattle<br/>(LossEvent, MilitaryEvent)<br/>seq: 5, cascade: 4<br/>magnitude: catastrophic"]
+        E6[":LossOfKingdom<br/>(LossEvent, PoliticalEvent)<br/>seq: 6, cascade: 5<br/>magnitude: total"]
+    end
+    
+    subgraph "LOST OBJECTS"
+        O1[":Nail<br/>(MaterialObject)<br/>value: negligible<br/>criticality: essential"]
+        O2[":Shoe<br/>(Equipment)<br/>value: low"]
+        O3[":Horse<br/>(Animal, Transport)<br/>value: moderate"]
+        O4[":Rider<br/>(Person, Combatant)<br/>value: high"]
+        O5[":Battle<br/>(MilitaryEvent)<br/>value: critical"]
+        O6[":Kingdom<br/>(PoliticalEntity)<br/>value: supreme"]
+    end
+    
+    subgraph "TEMPORAL SEQUENCE"
+        T1[":TimePoint1<br/>position: 1"]
+        T2[":TimePoint2<br/>position: 2"]
+        T3[":TimePoint3<br/>position: 3"]
+        T4[":TimePoint4<br/>position: 4"]
+        T5[":TimePoint5<br/>position: 5"]
+        T6[":TimePoint6<br/>position: 6"]
+    end
+    
+    E1 -->|":directlyCauses"| E2
+    E2 -->|":directlyCauses"| E3
+    E3 -->|":directlyCauses"| E4
+    E4 -->|":directlyCauses"| E5
+    E5 -->|":directlyCauses"| E6
+    
+    E1 -.->|":ultimatelyCauses"| E6
+    
+    E2 -.->|":causedBy"| E1
+    E3 -.->|":causedBy"| E2
+    E4 -.->|":causedBy"| E3
+    E5 -.->|":causedBy"| E4
+    E6 -.->|":causedBy"| E5
+    
+    E1 -->|":lostObject"| O1
+    E2 -->|":lostObject"| O2
+    E3 -->|":lostObject"| O3
+    E4 -->|":lostObject"| O4
+    E5 -->|":lostObject"| O5
+    E6 -->|":lostObject"| O6
+    
+    O2 -->|":dependsOn"| O1
+    O3 -->|":dependsOn"| O2
+    O4 -->|":dependsOn"| O3
+    O5 -->|":dependsOn"| O4
+    O6 -->|":dependsOn"| O5
+    
+    E1 -->|"time:hasTemporalEntity"| T1
+    E2 -->|"time:hasTemporalEntity"| T2
+    E3 -->|"time:hasTemporalEntity"| T3
+    E4 -->|"time:hasTemporalEntity"| T4
+    E5 -->|"time:hasTemporalEntity"| T5
+    E6 -->|"time:hasTemporalEntity"| T6
+    
+    T1 -->|"time:after"| T2
+    T2 -->|"time:after"| T3
+    T3 -->|"time:after"| T4
+    T4 -->|"time:after"| T5
+    T5 -->|"time:after"| T6
+    
+    CHAIN[":HorseshoeNailCascade<br/>(CausalChain)<br/>chainLength: 6<br/>narrativeType: cautionary_tale<br/>theme: proportionality_inversion"]
+    
+    CHAIN -->|":hasFirstEvent"| E1
+    CHAIN -->|":hasLastEvent"| E6
+    
+    style E1 fill:#ff6b6b,stroke:#c92a2a,stroke-width:3px
+    style E2 fill:#ff8787,stroke:#e03131,stroke-width:2px
+    style E3 fill:#ffa94d,stroke:#fd7e14,stroke-width:2px
+    style E4 fill:#ffd43b,stroke:#fab005,stroke-width:2px
+    style E5 fill:#74c0fc,stroke:#339af0,stroke-width:2px
+    style E6 fill:#4dabf7,stroke:#1c7ed6,stroke-width:3px
+    
+    style O1 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    style O2 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    style O3 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    style O4 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    style O5 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    style O6 fill:#ffe066,stroke:#f59f00,stroke-width:2px
+    
+    style T1 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    style T2 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    style T3 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    style T4 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    style T5 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    style T6 fill:#d0bfff,stroke:#9775fa,stroke-width:1px
+    
+    style CHAIN fill:#a9e34b,stroke:#82c91e,stroke-width:3px
